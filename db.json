@@ -1,0 +1,64 @@
+{
+    "books":[
+        {"id":1,
+        "title": "Book about me",
+        "author":"Pushkin",
+        "ganres": ["биография"],
+        "raiting":1.34},
+
+        {"id":2,
+        "title": "Ship",
+        "author":"Tutchev",
+        "ganres": ["story"],
+        "raiting":2.34},
+
+         {"id":3,
+        "title": "DOM",
+        "author":"Tkach",
+        "ganres": ["sciense"],
+        "raiting":3.34},
+
+         {"id":4,
+        "title": "House",
+        "author":"Turgenev",
+        "ganres": ["scary"],
+        "raiting":4.34},
+
+         {"id":5,
+        "title": "Tip",
+        "author":"Mayakovskiy",
+        "ganres": ["Poem"],
+        "raiting":5.34},
+
+         {"id":6,
+        "title": "Car",
+        "author":"Esenin",
+        "ganres": ["classic"],
+        "raiting":6.34},
+
+         {"id":7,
+        "title": "story",
+        "author":"Shevchenko",
+        "ganres": ["биография"],
+        "raiting":7.34},
+
+         {"id":8,
+        "title": "Town",
+        "author":"Georg",
+        "ganres": ["novel"],
+        "raiting":8.34},
+
+         {"id":9,
+        "title": "hand",
+        "author":"Nutunnic",
+        "ganres": ["humour"],
+        "raiting":9.34},
+
+         {"id":10,
+        "title": "Tiler",
+        "author":"Ben Steed",
+        "ganres": ["instruction"],
+        "raiting":10.34}
+    ]
+   
+}
