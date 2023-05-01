@@ -4,11 +4,16 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 const KEY = '35921971-1e573a853b9182cbe66d281b3';
 const URL = 'https://pixabay.com/api/';
 
+const buttonMore = document.querySelector('.load-more');
 const refs = {
   form: document.querySelector('#search-form'),
   input: document.querySelector('input'),
   gallery: document.querySelector('.gallery'),
 };
+
+function addHideClass(elem) {
+  elem.classList.add('hide');
+}
 
 class GalleryApiService {
   constructor() {
@@ -59,9 +64,49 @@ class GalleryApiService {
 const galleryApiService = new GalleryApiService();
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+const gallery = document.querySelector('.gallery');
+
+const createPhotoCard = item => {
+  return `
+  <div class="photo-card">
+  <a href = '${item.largeImageURL}'>
+    <img class = 'photo' src='${item.webformatURL}' alt="${item.tags}" loading="lazy"/>
+    <div class="info">
+    <p class="info-item">
+      <b>Likes</b><br>
+      ${item.likes}
+    </p>
+    <p class="info-item">
+      <b>Views</b><br>
+      ${item.views}
+    </p>
+    <p class="info-item">
+      <b>Comments</b><br>
+      ${item.comments}
+    </p>
+    <p class="info-item">
+      <b>Downloads</b><br>
+      ${item.downloads}
+    </p>
+  </div>
+    </a>
+</div>
+  `;
+};
+
+const insertContent = array => {
+  const result = array.reduce((acc, item) => acc + createPhotoCard(item), '');
+  gallery.insertAdjacentHTML('beforeend', result);
+
+  let lightbox = new SimpleLightbox('.gallery a');
+  lightbox.refresh();
+};
+////////////////////////////////////////////////////////////////
+
 const onSearch = async e => {
   e.preventDefault();
   galleryApiService.name = refs.input.value.trim();
+  console.dir(galleryApiService);
   galleryApiService.resetPage();
 
   if (galleryApiService.name === '') {
@@ -78,7 +123,7 @@ const onSearch = async e => {
     );
 
     if (response.data.hits.length === 0) {
-      // addHideClass(buttonMore);
+      addHideClass(buttonMore);
       observer.unobserve(endOfGallery);
       Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
@@ -87,15 +132,16 @@ const onSearch = async e => {
       galleryApiService.page > galleryApiService.totalPages ||
       response.data.totalHits < galleryApiService.perPage
     ) {
-      // addHideClass(buttonMore);
+      addHideClass(buttonMore);
       observer.unobserve(endOfGallery);
       Notify.info("We're sorry, but you've reached the end of search results.");
     } else {
       Notify.success(`Hooray! We found ${response.data.totalHits} images`);
-      // buttonMore.classList.remove('hide');
-      observer.observe(endOfGallery);
+      buttonMore.classList.remove('hide');
+      //   observer.observe(endOfGallery);
+      //
     }
-
+    // console.dir(onSearch());
     insertContent(response.data.hits);
   } catch (error) {
     console.log(error);
@@ -103,3 +149,50 @@ const onSearch = async e => {
 };
 
 refs.form.addEventListener('submit', onSearch);
+////////////////////////////////////////////////////////////////////////////////
+const onEntry = entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && galleryApiService.name !== '') {
+      galleryApiService
+        .getImages()
+        .then(response => {
+          if (
+            galleryApiService.page > galleryApiService.totalPages ||
+            response.data.totalHits < galleryApiService.perPage
+          ) {
+            observer.unobserve(endOfGallery);
+            Notify.info(
+              "We're sorry, but you've reached the end of search results."
+            );
+          }
+          insertContent(response.data.hits);
+        })
+        .catch(error => console.log(error));
+    }
+  });
+};
+
+const observerOptions = {
+  rootMargin: '300px',
+};
+
+const observer = new IntersectionObserver(onEntry, observerOptions);
+
+const onLoadMore = async () => {
+  try {
+    const response = await galleryApiService.getImages();
+
+    if (
+      galleryApiService.page > galleryApiService.totalPages ||
+      response.data.totalHits < galleryApiService.perPage
+    ) {
+      addHideClass(buttonMore);
+      Notify.info("We're sorry, but you've reached the end of search results.");
+    }
+    insertContent(response.data.hits);
+    smoothScroll();
+  } catch (error) {
+    console.log(error);
+  }
+};
+buttonMore.addEventListener('click', onLoadMore);
