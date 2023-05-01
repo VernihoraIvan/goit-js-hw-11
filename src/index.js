@@ -170,12 +170,6 @@ const onEntry = entries => {
   });
 };
 
-const observerOptions = {
-  rootMargin: '300px',
-};
-
-const observer = new IntersectionObserver(onEntry, observerOptions);
-
 const onLoadMore = async () => {
   try {
     const response = await galleryApiService.getImages();
@@ -188,7 +182,6 @@ const onLoadMore = async () => {
       Notify.info("We're sorry, but you've reached the end of search results.");
     }
     insertContent(response.data.hits);
-    smoothScroll();
   } catch (error) {
     console.log(error);
   }
