@@ -116,7 +116,6 @@ const onSearch = async e => {
   try {
     const response = await galleryApiService.getImages();
     refs.gallery.innerHTML = '';
-    // smoothScroll();
 
     galleryApiService.totalPages = Math.ceil(
       response.data?.totalHits / response.config.params.per_page
@@ -138,7 +137,6 @@ const onSearch = async e => {
     } else {
       Notify.success(`Hooray! We found ${response.data.totalHits} images`);
       buttonMore.classList.remove('hide');
-      //   observer.observe(endOfGallery);
       //
     }
     // console.dir(onSearch());
