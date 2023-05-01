@@ -148,27 +148,6 @@ const onSearch = async e => {
 
 refs.form.addEventListener('submit', onSearch);
 ////////////////////////////////////////////////////////////////////////////////
-const onEntry = entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && galleryApiService.name !== '') {
-      galleryApiService
-        .getImages()
-        .then(response => {
-          if (
-            galleryApiService.page > galleryApiService.totalPages ||
-            response.data.totalHits < galleryApiService.perPage
-          ) {
-            observer.unobserve(endOfGallery);
-            Notify.info(
-              "We're sorry, but you've reached the end of search results."
-            );
-          }
-          insertContent(response.data.hits);
-        })
-        .catch(error => console.log(error));
-    }
-  });
-};
 
 const onLoadMore = async () => {
   try {
